@@ -43,7 +43,7 @@ If you wish to make any changes later, simply enter the command below:
 nano /etc/shadowsocks.json
 ```
 
-Once you are done with the configuration, hit 'Ctrl + O', 'Enter' and then 'Ctrl + X' to save and exit the editor. 
+Once you are done with the configuration, hit 'Ctrl + O', 'Enter' and then 'Ctrl + X' to save and exit the editor.
 
 Every time you make changes to this file, you need to restart shadowsocks so the changes will take effect. Restart shadowsocks using the command below (if you have changed the config file).
 
@@ -310,5 +310,5 @@ function proxy_on() {
 Test if your proxy is working:
 
 ```bash
-curl ip.gs # current IP: 8.8.8.8 From: Los Angeles, California, USA choopa.com 
+curl ip.gs # current IP: 8.8.8.8 From: Los Angeles, California, USA choopa.com
 ```
