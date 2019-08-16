@@ -212,3 +212,103 @@ Global will route all domains through the proxy, while PAC will only use the pro
 For this reason, I recommend using the Global mode. It's easy enough to enable/disable that you can conveniently switch it off if you need to access some Chinese websites.
 
 Other programs, e.g. SSH clients, may need to set manually to use the system proxy or use a `SOCKS5 proxy` on server `127.0.0.1 port 1080` (Windows) or `127.0.0.1 port 1086` (Mac). The proxy settings can usually be found in the advanced settings for most applications.
+
+#### Set up proxy for your terminal
+
+First, install privoxy via brew.
+
+```bash
+brew install privoxy
+```
+
+Open the configuration file at `/usr/local/etc/privoxy/config`
+
+```bash
+nano /usr/local/etc/privoxy/config
+```
+
+Add the following line at the end of the config file:
+
+```
+listen-address 0.0.0.0:8118
+forward-socks5 / localhost:1080 .
+```
+
+**or you can append directly into the config file using this command:
+
+```bash
+echo 'listen-address 0.0.0.0:8118\nforward-socks5 / localhost:1080 .' >> /usr/local/etc/privoxy/config
+```
+
+Start up privoxy by using this command:
+
+```bash
+sudo /usr/local/sbin/privoxy /usr/local/etc/privoxy/config
+```
+
+Check if the startup is successful:
+
+```bash
+netstat -na | grep 8118
+```
+
+If you get the following message, it means that the startup is successful:
+
+```
+tcp4	0	0  *.8118		*.*		LISTEN
+```
+
+##### Use privoxy in terminal
+
+Enter the following command to make terminal go into proxy:
+
+```bash
+export http_proxy='http://localhost:8118'
+export https_proxy='http://localhost:8118'
+```
+
+To cancel the proxy, enter the following command:
+
+```bash
+unset http_proxy
+unset https_proxy
+```
+
+If you close the terminal, the proxy will be disabled. If you need to make it permanent, add the command in your shell profile, e.g. `.bash_profile`, `.zshrc`, etc.
+
+```bash
+vim ~/.zshrc
+-----------------------------------------------------
+export http_proxy='http://localhost:8118'
+export https_proxy='http://localhost:8118'
+-----------------------------------------------------
+```
+
+Reload your profile to take effect immediately:
+
+```bash
+source ~/.zshrc
+```
+
+If you want to add a switch toggle in your shell profile, add this following function:
+
+```
+function proxy_off(){
+    unset http_proxy
+    unset https_proxy
+    echo -e "Proxy is off!"
+}
+
+function proxy_on() {
+    export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
+    export http_proxy="http://127.0.0.1:8118"
+    export https_proxy=$http_proxy
+    echo -e "Proxy is on!"
+}
+```
+
+Test if your proxy is working:
+
+```bash
+curl ip.gs # current IP: 8.8.8.8 From: Los Angeles, California, USA choopa.com 
+```
